@@ -1,4 +1,5 @@
 import * as jose from "jose";
+import { log } from "../logger.js";
 
 const CERTS_URL_SUFFIX = "/cdn-cgi/access/certs";
 let cachedJWKS = null;
@@ -38,7 +39,7 @@ export function cloudflareAccess() {
     const audience = process.env.CF_AUD;
 
     if (!teamDomain || !audience) {
-      console.error(
+      log.error(
         "CF_TEAM_DOMAIN and CF_AUD must be set (or set CF_ACCESS_ENABLED=false to bypass)"
       );
       return res.status(500).json({ error: "Server misconfiguration" });
@@ -67,7 +68,7 @@ export function cloudflareAccess() {
       };
       next();
     } catch (err) {
-      console.error("CF Access JWT validation failed:", err.message);
+      log.error("CF Access JWT validation failed:", err.message);
       return res.status(403).json({ error: "Invalid access token" });
     }
   };

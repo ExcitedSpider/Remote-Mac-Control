@@ -4,6 +4,7 @@ import {
   setSSH,
   setFileSharing,
 } from "../services/macControl.js";
+import { log } from "../logger.js";
 
 const router = Router();
 
@@ -23,7 +24,9 @@ router.post("/ssh", async (req, res) => {
   if (typeof enable !== "boolean") {
     return res.status(400).json({ error: '"enable" must be a boolean' });
   }
+  log.warn(`SSH ${enable ? "ENABLE" : "DISABLE"} requested from ${req.ip}`);
   const result = await setSSH(enable);
+  log.warn(`SSH ${enable ? "ENABLE" : "DISABLE"} result: ${result.success ? "success" : result.error}`);
   const status = await getAllStatus();
   res.json({ result, status });
 });
@@ -34,7 +37,9 @@ router.post("/file-sharing", async (req, res) => {
   if (typeof enable !== "boolean") {
     return res.status(400).json({ error: '"enable" must be a boolean' });
   }
+  log.warn(`FILE SHARING ${enable ? "ENABLE" : "DISABLE"} requested from ${req.ip}`);
   const result = await setFileSharing(enable);
+  log.warn(`FILE SHARING ${enable ? "ENABLE" : "DISABLE"} result: ${result.success ? "success" : result.error}`);
   const status = await getAllStatus();
   res.json({ result, status });
 });

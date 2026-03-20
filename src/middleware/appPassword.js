@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { log } from "../logger.js";
 
 const COOKIE_NAME = "my-remote-auth";
 const TOKEN_TTL = 24 * 60 * 60 * 1000; // 24 hours
@@ -42,6 +43,7 @@ export function appPassword() {
     if (req.method === "POST" && req.path === "/logout") {
       const cookies = parseCookies(req.headers.cookie);
       validTokens.delete(cookies[COOKIE_NAME]);
+      log.info(`LOGOUT from ${req.ip}`);
       res.setHeader(
         "Set-Cookie",
         `${COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`
@@ -67,8 +69,10 @@ export function appPassword() {
           "Set-Cookie",
           `${COOKIE_NAME}=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${TOKEN_TTL / 1000}`
         );
+        log.info(`LOGIN SUCCESS from ${req.ip}`);
         return res.json({ ok: true });
       }
+      log.warn(`LOGIN FAILED from ${req.ip}`);
       return res.status(401).json({ error: "Wrong password" });
     }
 

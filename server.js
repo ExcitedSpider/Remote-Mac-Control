@@ -12,6 +12,7 @@ import helmet from "helmet";
 import { cloudflareAccess } from "./src/middleware/cloudflareAccess.js";
 import { appPassword } from "./src/middleware/appPassword.js";
 import remoteRoutes from "./src/routes/remote.js";
+import { log } from "./src/logger.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -43,7 +44,7 @@ if (USE_HTTPS) {
   const certPath = path.join(certDir, "cert.pem");
 
   if (!fs.existsSync(keyPath) || !fs.existsSync(certPath)) {
-    console.error(
+    log.error(
       "TLS certs not found. Generate them first:\n" +
         "  npm run generate-certs\n" +
         "Or set USE_HTTPS=false to run plain HTTP (e.g. behind cloudflared)."
@@ -60,11 +61,11 @@ if (USE_HTTPS) {
   );
 
   server.listen(PORT, () => {
-    console.log(`HTTPS server running on https://localhost:${PORT}`);
+    log.info(`HTTPS server running on https://localhost:${PORT}`);
   });
 } else {
   const server = http.createServer(app);
   server.listen(PORT, () => {
-    console.log(`HTTP server running on http://localhost:${PORT}`);
+    log.info(`HTTP server running on http://localhost:${PORT}`);
   });
 }
