@@ -7,7 +7,9 @@
 
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/z5698891/Documents/my-remote/start.sh</string>
+        <string>/bin/zsh</string>
+        <string>-c</string>
+        <string>/opt/homebrew/bin/cloudflared tunnel --config /Users/z5698891/Documents/my-remote/cloudflared-config.yml run my-remote &amp; /opt/homebrew/bin/node /Users/z5698891/Documents/my-remote/server.js &amp; wait</string>
     </array>
 
     <key>WorkingDirectory</key>
