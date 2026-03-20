@@ -11,10 +11,20 @@ body {
   padding: 24px;
 }
 
+.dashboard-wrapper {
+  position: relative;
+}
+
+.dashboard-wrapper > .btn-logout {
+  position: absolute;
+  top: -40px;
+  right: 0;
+}
+
 .dashboard-layout {
   display: flex;
   gap: 24px;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .container {
@@ -173,13 +183,8 @@ body {
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 
-.system-metrics-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.85em;
-  color: #aaa;
-  margin-bottom: 12px;
+.system-metrics .header {
+  margin-bottom: 16px;
 }
 
 .ws-indicator {

@@ -5,8 +5,8 @@ export default function SystemMetrics({ metrics, wsStatus, history }) {
 
   return (
     <div className="system-metrics">
-      <div className="system-metrics-header">
-        <span>System Metrics</span>
+      <div className="header">
+        <h1>System Metrics</h1>
         <span className={`ws-indicator ${connected ? "ws-connected" : ""}`} title={wsStatus} />
       </div>
 

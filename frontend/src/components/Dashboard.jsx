@@ -32,11 +32,12 @@ export default function Dashboard({ status, onStatusChange, onLogout }) {
   };
 
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-wrapper">
+      <button className="btn-logout" onClick={onLogout}>Logout</button>
+      <div className="dashboard-layout">
       <div className="container">
         <div className="header">
           <h1>Mac Remote Control</h1>
-          <button className="btn-logout" onClick={onLogout}>Logout</button>
         </div>
 
         <ServiceToggle
@@ -59,6 +60,7 @@ export default function Dashboard({ status, onStatusChange, onLogout }) {
       </div>
 
       <SystemMetrics metrics={metrics} wsStatus={wsStatus} history={history} />
+    </div>
     </div>
   );
 }
