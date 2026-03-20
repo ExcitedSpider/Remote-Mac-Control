@@ -1,6 +1,6 @@
 # my-remote
 
-HTTPS web server for remotely controlling macOS services (SSH, File Sharing), protected by Cloudflare Access.
+Web server for remotely controlling macOS services (SSH, File Sharing), protected by Cloudflare Access.
 
 ## Prerequisites
 
@@ -40,10 +40,13 @@ In the [Cloudflare Zero Trust dashboard](https://one.dash.cloudflare.com/):
 3. Add an access policy (e.g. allow specific emails, IdP groups)
 4. Copy the **Application ID** (this is the JWT audience value)
 
-### 4. Create `.env`
+### 4. Create config files
+
+Copy and edit the templates:
 
 ```bash
 cp .env.example .env
+cp cloudflared-config.example.yml cloudflared-config.yml
 ```
 
 Edit `.env`:
@@ -53,17 +56,29 @@ PORT=3000
 USE_HTTPS=false
 CF_ACCESS_ENABLED=true
 CF_TEAM_DOMAIN=yourteam.cloudflareaccess.com
-CF_AUD=your-application-audience-tag
+CF_AUD=your-application-id
+```
+
+Edit `cloudflared-config.yml` — replace `<TUNNEL_ID>` with your tunnel ID and set your hostname:
+
+```yaml
+tunnel: <TUNNEL_ID>
+credentials-file: ~/.cloudflared/<TUNNEL_ID>.json
+
+ingress:
+  - hostname: remote.yourdomain.com
+    service: http://localhost:3000
+  - service: http_status:404
 ```
 
 ### 5. Start the server
 
 ```bash
 node server.js
-cloudflared tunnel run --url http://localhost:3000 my-remote
+cloudflared tunnel --config ./cloudflared-config.yml run my-remote
 ```
 
-For local development (no HTTPS, no auth):
+For local development (no auth):
 
 ```bash
 npm run dev
