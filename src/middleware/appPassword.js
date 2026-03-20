@@ -56,12 +56,11 @@ export function appPassword() {
     // Login endpoint
     if (req.method === "POST" && req.path === "/login") {
       const { password: submitted } = req.body || {};
+      const submittedBuf = Buffer.from(submitted || "");
+      const passwordBuf = Buffer.from(password);
       if (
-        typeof submitted === "string" &&
-        crypto.timingSafeEqual(
-          Buffer.from(submitted),
-          Buffer.from(password)
-        )
+        submittedBuf.length === passwordBuf.length &&
+        crypto.timingSafeEqual(submittedBuf, passwordBuf)
       ) {
         const token = generateToken();
         res.setHeader(

@@ -16,13 +16,15 @@ Web server for remotely controlling macOS services (SSH, File Sharing), protecte
 npm install
 ```
 
-### 2. Grant passwordless sudo
+### 2. Grant passwordless sudo and Full Disk Access
 
 The server needs to run `systemsetup` and `launchctl` as root. This script creates a sudoers entry scoped to only those specific commands:
 
 ```bash
 sudo bash setup-sudoers.sh
 ```
+
+Toggling SSH (Remote Login) also requires **Full Disk Access** for the Node.js binary. Go to **System Settings > Privacy & Security > Full Disk Access** and add `/opt/homebrew/bin/node` (press Cmd+Shift+G in the file picker to enter the path).
 
 ### 3. Configure Cloudflare Access
 
