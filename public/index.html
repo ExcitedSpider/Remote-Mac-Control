@@ -126,6 +126,9 @@
     }
 
     async function fetchStatus() {
+      sshToggle.disabled = true;
+      fsToggle.disabled = true;
+      setStatus('Loading…');
       try {
         const res = await fetch('/api/status');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
