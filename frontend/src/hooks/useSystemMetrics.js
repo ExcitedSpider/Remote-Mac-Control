@@ -1,10 +1,33 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+
+const MAX_HISTORY = 30;
+
+function formatTime(date) {
+  return date.toLocaleTimeString("en-US", { hour12: false });
+}
 
 export default function useSystemMetrics(enabled) {
   const [metrics, setMetrics] = useState(null);
+  const [history, setHistory] = useState([]);
   const [wsStatus, setWsStatus] = useState("disconnected");
   const wsRef = useRef(null);
   const reconnectTimer = useRef(null);
+
+  const handleMessage = useCallback((event) => {
+    try {
+      const data = JSON.parse(event.data);
+      setMetrics(data);
+      setHistory((prev) => {
+        const entry = {
+          time: formatTime(new Date()),
+          cpu: data.cpu.usagePercent,
+          memory: data.memory.usagePercent,
+        };
+        const next = [...prev, entry];
+        return next.length > MAX_HISTORY ? next.slice(-MAX_HISTORY) : next;
+      });
+    } catch {}
+  }, []);
 
   useEffect(() => {
     if (!enabled) return;
@@ -16,12 +39,7 @@ export default function useSystemMetrics(enabled) {
       setWsStatus("connecting");
 
       ws.onopen = () => setWsStatus("connected");
-
-      ws.onmessage = (event) => {
-        try {
-          setMetrics(JSON.parse(event.data));
-        } catch {}
-      };
+      ws.onmessage = handleMessage;
 
       ws.onclose = () => {
         setWsStatus("disconnected");
@@ -41,7 +59,7 @@ export default function useSystemMetrics(enabled) {
       }
       setWsStatus("disconnected");
     };
-  }, [enabled]);
+  }, [enabled, handleMessage]);
 
-  return { metrics, wsStatus };
+  return { metrics, history, wsStatus };
 }

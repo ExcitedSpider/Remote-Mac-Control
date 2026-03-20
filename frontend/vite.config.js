@@ -1,5 +1,19 @@
+import { readFileSync } from "node:fs";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+
+function loadEnvPort() {
+  const envFile = process.env.ENV_FILE || "../local.env";
+  try {
+    const content = readFileSync(envFile, "utf-8");
+    const match = content.match(/^PORT=(\d+)/m);
+    if (match) return match[1];
+  } catch {}
+  return "3443";
+}
+
+const backendPort = loadEnvPort();
+const backendUrl = `http://localhost:${backendPort}`;
 
 export default defineConfig({
   plugins: [react()],
@@ -11,11 +25,11 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      "/api": "http://localhost:3001",
-      "/login": "http://localhost:3001",
-      "/logout": "http://localhost:3001",
+      "/api": backendUrl,
+      "/login": backendUrl,
+      "/logout": backendUrl,
       "/ws": {
-        target: "http://localhost:3001",
+        target: backendUrl,
         ws: true,
       },
     },

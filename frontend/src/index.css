@@ -8,6 +8,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 24px;
+}
+
+.dashboard-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
 }
 
 .container {
@@ -159,10 +166,11 @@ body {
 
 /* System metrics */
 .system-metrics {
-  margin-bottom: 24px;
-  padding: 16px;
-  background: #1a1a2e;
-  border-radius: 10px;
+  background: #16213e;
+  border-radius: 16px;
+  padding: 24px;
+  width: 420px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 
 .system-metrics-header {
@@ -193,7 +201,7 @@ body {
 
 .metric-card {
   flex: 1;
-  background: #16213e;
+  background: #1a1a2e;
   border-radius: 8px;
   padding: 12px;
 }
@@ -229,4 +237,18 @@ body {
   background: #0f9d58;
   border-radius: 3px;
   transition: width 0.5s ease;
+}
+
+/* Metrics charts */
+.metrics-charts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.metrics-chart-label {
+  font-size: 0.75em;
+  color: #888;
+  margin-bottom: 4px;
 }

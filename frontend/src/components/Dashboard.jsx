@@ -6,7 +6,7 @@ import ServiceToggle from "./ServiceToggle.jsx";
 import StatusBar from "./StatusBar.jsx";
 
 export default function Dashboard({ status, onStatusChange, onLogout }) {
-  const { metrics, wsStatus } = useSystemMetrics(true);
+  const { metrics, history, wsStatus } = useSystemMetrics(true);
   const [statusMsg, setStatusMsg] = useState({ message: "Connected", type: "success" });
   const [busy, setBusy] = useState(false);
 
@@ -32,31 +32,33 @@ export default function Dashboard({ status, onStatusChange, onLogout }) {
   };
 
   return (
-    <div className="container">
-      <div className="header">
-        <h1>Mac Remote Control</h1>
-        <button className="btn-logout" onClick={onLogout}>Logout</button>
+    <div className="dashboard-layout">
+      <div className="container">
+        <div className="header">
+          <h1>Mac Remote Control</h1>
+          <button className="btn-logout" onClick={onLogout}>Logout</button>
+        </div>
+
+        <ServiceToggle
+          label="SSH (Remote Login)"
+          description="Opens port 22 for SSH access"
+          checked={status.ssh.enabled}
+          disabled={busy}
+          onChange={(enable) => handleToggle("ssh", "SSH", enable)}
+        />
+
+        <ServiceToggle
+          label="File Sharing (SMB)"
+          description="Enables network filesystem access"
+          checked={status.fileSharing.enabled}
+          disabled={busy}
+          onChange={(enable) => handleToggle("file-sharing", "File Sharing", enable)}
+        />
+
+        <StatusBar message={statusMsg.message} type={statusMsg.type} />
       </div>
 
-      <SystemMetrics metrics={metrics} wsStatus={wsStatus} />
-
-      <ServiceToggle
-        label="SSH (Remote Login)"
-        description="Opens port 22 for SSH access"
-        checked={status.ssh.enabled}
-        disabled={busy}
-        onChange={(enable) => handleToggle("ssh", "SSH", enable)}
-      />
-
-      <ServiceToggle
-        label="File Sharing (SMB)"
-        description="Enables network filesystem access"
-        checked={status.fileSharing.enabled}
-        disabled={busy}
-        onChange={(enable) => handleToggle("file-sharing", "File Sharing", enable)}
-      />
-
-      <StatusBar message={statusMsg.message} type={statusMsg.type} />
+      <SystemMetrics metrics={metrics} wsStatus={wsStatus} history={history} />
     </div>
   );
 }
