@@ -2,3 +2,4 @@ node_modules/
 certs/
 .env
 cloudflared-config.yml
+logs/

@@ -10,7 +10,7 @@ const execFileAsync = promisify(execFile);
  */
 async function sudoExec(cmd, args) {
   try {
-    const { stdout, stderr } = await execFileAsync("sudo", [cmd, ...args], {
+    const { stdout, stderr } = await execFileAsync("/usr/bin/sudo", [cmd, ...args], {
       timeout: 10_000,
     });
     return { success: true, stdout: stdout.trim(), stderr: stderr.trim() };
@@ -26,8 +26,8 @@ async function sudoExec(cmd, args) {
 
 export async function getSSHStatus() {
   try {
-    const { stdout } = await execFileAsync("sudo", [
-      "systemsetup",
+    const { stdout } = await execFileAsync("/usr/bin/sudo", [
+      "/usr/sbin/systemsetup",
       "-getremotelogin",
     ]);
     const on = /on/i.test(stdout);
@@ -41,8 +41,8 @@ export async function setSSH(enable) {
   const flag = enable ? "on" : "off";
   // -f flag forces off without confirmation prompt
   const args = enable
-    ? ["systemsetup", "-setremotelogin", flag]
-    : ["systemsetup", "-f", "-setremotelogin", flag];
+    ? ["/usr/sbin/systemsetup", "-setremotelogin", flag]
+    : ["/usr/sbin/systemsetup", "-f", "-setremotelogin", flag];
   return sudoExec(args[0], args.slice(1));
 }
 
@@ -52,8 +52,8 @@ const SMB_PLIST = "/System/Library/LaunchDaemons/com.apple.smbd.plist";
 
 export async function getFileSharingStatus() {
   try {
-    const { stdout } = await execFileAsync("sudo", [
-      "launchctl",
+    const { stdout } = await execFileAsync("/usr/bin/sudo", [
+      "/bin/launchctl",
       "list",
       "com.apple.smbd",
     ]);
@@ -66,7 +66,7 @@ export async function getFileSharingStatus() {
 
 export async function setFileSharing(enable) {
   const action = enable ? "load" : "unload";
-  return sudoExec("launchctl", [action, "-w", SMB_PLIST]);
+  return sudoExec("/bin/launchctl", [action, "-w", SMB_PLIST]);
 }
 
 // --- Combined status ---

@@ -54,6 +54,7 @@ Edit `.env`:
 ```
 PORT=3000
 USE_HTTPS=false
+APP_PASSWORD=your-secret-password
 CF_ACCESS_ENABLED=true
 CF_TEAM_DOMAIN=yourteam.cloudflareaccess.com
 CF_AUD=your-application-id
@@ -71,14 +72,38 @@ ingress:
   - service: http_status:404
 ```
 
-### 5. Start the server
+### 5. Install as a launchd service
+
+The server runs as a launchd agent that auto-restarts on crash and logs output to `logs/`.
 
 ```bash
-node server.js
+cp com.my-remote.server.plist ~/Library/LaunchAgents/
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.my-remote.server.plist
+```
+
+Start the tunnel separately:
+
+```bash
 cloudflared tunnel --config ./cloudflared-config.yml run my-remote
 ```
 
-For local development (no auth):
+Manage the service:
+
+```bash
+# Stop
+launchctl bootout gui/$(id -u)/com.my-remote.server
+
+# Start
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.my-remote.server.plist
+
+# Check status
+launchctl list | grep my-remote
+
+# View logs
+tail -f logs/server.log logs/server.error.log
+```
+
+For local development (no auth, no daemon):
 
 ```bash
 npm run dev
@@ -92,7 +117,10 @@ npm run dev
 | POST   | `/api/ssh`         | `{"enable": true}`  | Toggle SSH (Remote Login)     |
 | POST   | `/api/file-sharing` | `{"enable": true}` | Toggle File Sharing (SMB)     |
 
-All `/api` routes require a valid Cloudflare Access JWT (unless `CF_ACCESS_ENABLED=false`).
+All routes are protected by two layers of auth:
+
+1. **Cloudflare Access** — JWT validation (bypass with `CF_ACCESS_ENABLED=false`)
+2. **App password** — set via `APP_PASSWORD` in `.env` (omit to disable)
 
 ## Why `USE_HTTPS=false`?
 

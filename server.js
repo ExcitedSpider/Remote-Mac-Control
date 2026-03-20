@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 import express from "express";
 import helmet from "helmet";
 import { cloudflareAccess } from "./src/middleware/cloudflareAccess.js";
+import { appPassword } from "./src/middleware/appPassword.js";
 import remoteRoutes from "./src/routes/remote.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -19,6 +20,9 @@ const app = express();
 // Security headers
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json());
+
+// App password (guards everything)
+app.use(appPassword());
 
 // Cloudflare Access auth on all /api routes
 app.use("/api", cloudflareAccess());

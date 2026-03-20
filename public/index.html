@@ -85,7 +85,10 @@
 </head>
 <body>
   <div class="container">
-    <h1>Mac Remote Control</h1>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
+      <h1 style="margin:0">Mac Remote Control</h1>
+      <button onclick="logout()" style="background:none;border:1px solid #555;color:#aaa;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:0.8em">Logout</button>
+    </div>
 
     <div class="service">
       <div class="service-info">
@@ -160,6 +163,11 @@
       } finally {
         toggleEl.disabled = false;
       }
+    }
+
+    async function logout() {
+      await fetch('/logout', { method: 'POST' });
+      window.location.reload();
     }
 
     sshToggle.addEventListener('change', () =>
