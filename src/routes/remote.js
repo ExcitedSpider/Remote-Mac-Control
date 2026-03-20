@@ -24,7 +24,7 @@ router.post("/ssh", async (req, res) => {
   if (typeof enable !== "boolean") {
     return res.status(400).json({ error: '"enable" must be a boolean' });
   }
-  log.warn(`SSH ${enable ? "ENABLE" : "DISABLE"} requested from ${req.ip}`);
+  log.warn(`SSH ${enable ? "ENABLE" : "DISABLE"} requested from ${req.clientIp}`);
   const result = await setSSH(enable);
   log.warn(`SSH ${enable ? "ENABLE" : "DISABLE"} result: ${result.success ? "success" : result.error}`);
   const status = await getAllStatus();
@@ -37,7 +37,7 @@ router.post("/file-sharing", async (req, res) => {
   if (typeof enable !== "boolean") {
     return res.status(400).json({ error: '"enable" must be a boolean' });
   }
-  log.warn(`FILE SHARING ${enable ? "ENABLE" : "DISABLE"} requested from ${req.ip}`);
+  log.warn(`FILE SHARING ${enable ? "ENABLE" : "DISABLE"} requested from ${req.clientIp}`);
   const result = await setFileSharing(enable);
   log.warn(`FILE SHARING ${enable ? "ENABLE" : "DISABLE"} result: ${result.success ? "success" : result.error}`);
   const status = await getAllStatus();

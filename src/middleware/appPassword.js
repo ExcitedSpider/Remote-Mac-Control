@@ -43,7 +43,7 @@ export function appPassword() {
     if (req.method === "POST" && req.path === "/logout") {
       const cookies = parseCookies(req.headers.cookie);
       validTokens.delete(cookies[COOKIE_NAME]);
-      log.info(`LOGOUT from ${req.ip}`);
+      log.info(`LOGOUT from ${req.clientIp}`);
       res.setHeader(
         "Set-Cookie",
         `${COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`
@@ -69,10 +69,10 @@ export function appPassword() {
           "Set-Cookie",
           `${COOKIE_NAME}=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${TOKEN_TTL / 1000}`
         );
-        log.info(`LOGIN SUCCESS from ${req.ip}`);
+        log.info(`LOGIN SUCCESS from ${req.clientIp}`);
         return res.json({ ok: true });
       }
-      log.warn(`LOGIN FAILED from ${req.ip}`);
+      log.warn(`LOGIN FAILED from ${req.clientIp}`);
       return res.status(401).json({ error: "Wrong password" });
     }
 

@@ -17,10 +17,17 @@ import { log } from "./src/logger.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
+app.set("trust proxy", true);
 
 // Security headers
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json());
+
+// Attach real client IP from Cloudflare headers
+app.use((req, _res, next) => {
+  req.clientIp = req.headers["cf-connecting-ip"] || req.ip;
+  next();
+});
 
 // Static UI (served before auth so assets are always accessible)
 app.use(express.static(path.join(__dirname, "public")));
