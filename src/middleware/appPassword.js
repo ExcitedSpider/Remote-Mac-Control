@@ -33,6 +33,8 @@ function parseCookies(header) {
   return cookies;
 }
 
+export { parseCookies, isValidToken, COOKIE_NAME };
+
 export function appPassword() {
   const password = process.env.APP_PASSWORD;
 

@@ -1,6 +1,6 @@
 import "node:process";
 import { loadEnvFile } from "node:process";
-try { loadEnvFile(); } catch {}
+try { loadEnvFile(process.env.ENV_FILE || ".env"); } catch {}
 
 import fs from "node:fs";
 import path from "node:path";
@@ -13,6 +13,15 @@ import { cloudflareAccess } from "./src/middleware/cloudflareAccess.js";
 import { appPassword } from "./src/middleware/appPassword.js";
 import remoteRoutes from "./src/routes/remote.js";
 import { log } from "./src/logger.js";
+import { setupMetricsWebSocket } from "./src/ws/metricsSocket.js";
+
+process.on("uncaughtException", (err) => {
+  log.error(`Uncaught exception: ${err.stack || err.message}`);
+  process.exit(1);
+});
+process.on("unhandledRejection", (err) => {
+  log.error(`Unhandled rejection: ${err.stack || err.message}`);
+});
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -66,12 +75,14 @@ if (USE_HTTPS) {
     },
     app
   );
+  setupMetricsWebSocket(server);
 
   server.listen(PORT, () => {
     log.info(`HTTPS server running on https://localhost:${PORT}`);
   });
 } else {
   const server = http.createServer(app);
+  setupMetricsWebSocket(server);
   server.listen(PORT, () => {
     log.info(`HTTP server running on http://localhost:${PORT}`);
   });

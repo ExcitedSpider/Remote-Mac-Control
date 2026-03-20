@@ -6,7 +6,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "CF_ACCESS_ENABLED=false APP_PASSWORD= USE_HTTPS=false PORT=3000 node server.js",
+    "dev": "ENV_FILE=local.env node server.js & cd frontend && npx vite",
+    "dev:backend": "ENV_FILE=local.env node server.js",
     "dev:frontend": "cd frontend && npx vite",
     "build": "cd frontend && npx vite build",
     "generate-certs": "mkdir -p certs && openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes -keyout certs/key.pem -out certs/cert.pem -days 365 -subj '/CN=localhost'"
@@ -19,7 +20,8 @@
     "helmet": "^8.1.0",
     "jose": "^6.2.2",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "ws": "^8.19.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.1",

@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { toggleService, fetchStatus } from "../api.js";
+import useSystemMetrics from "../hooks/useSystemMetrics.js";
+import SystemMetrics from "./SystemMetrics.jsx";
 import ServiceToggle from "./ServiceToggle.jsx";
 import StatusBar from "./StatusBar.jsx";
 
 export default function Dashboard({ status, onStatusChange, onLogout }) {
+  const { metrics, wsStatus } = useSystemMetrics(true);
   const [statusMsg, setStatusMsg] = useState({ message: "Connected", type: "success" });
   const [busy, setBusy] = useState(false);
 
@@ -34,6 +37,8 @@ export default function Dashboard({ status, onStatusChange, onLogout }) {
         <h1>Mac Remote Control</h1>
         <button className="btn-logout" onClick={onLogout}>Logout</button>
       </div>
+
+      <SystemMetrics metrics={metrics} wsStatus={wsStatus} />
 
       <ServiceToggle
         label="SSH (Remote Login)"

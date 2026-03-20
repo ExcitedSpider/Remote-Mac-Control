@@ -11,9 +11,13 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      "/api": "http://localhost:3000",
-      "/login": "http://localhost:3000",
-      "/logout": "http://localhost:3000",
+      "/api": "http://localhost:3001",
+      "/login": "http://localhost:3001",
+      "/logout": "http://localhost:3001",
+      "/ws": {
+        target: "http://localhost:3001",
+        ws: true,
+      },
     },
   },
 });

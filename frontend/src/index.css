@@ -156,3 +156,77 @@ body {
   margin-top: 12px;
   font-size: 0.9em;
 }
+
+/* System metrics */
+.system-metrics {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #1a1a2e;
+  border-radius: 10px;
+}
+
+.system-metrics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85em;
+  color: #aaa;
+  margin-bottom: 12px;
+}
+
+.ws-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #555;
+  display: inline-block;
+}
+
+.ws-indicator.ws-connected {
+  background: #0f9d58;
+}
+
+.metric-cards {
+  display: flex;
+  gap: 12px;
+}
+
+.metric-card {
+  flex: 1;
+  background: #16213e;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.metric-placeholder {
+  text-align: center;
+  color: #666;
+  font-size: 0.85em;
+  padding: 20px 12px;
+}
+
+.metric-label {
+  font-size: 0.75em;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.metric-bar {
+  height: 6px;
+  background: #2a2a4e;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.metric-bar-fill {
+  height: 100%;
+  background: #0f9d58;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
