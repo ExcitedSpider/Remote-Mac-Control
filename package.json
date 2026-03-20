@@ -1,0 +1,20 @@
+{
+  "name": "my-remote",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Mac remote control server with Cloudflare Access",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "CF_ACCESS_ENABLED=false USE_HTTPS=false PORT=3000 node server.js",
+    "generate-certs": "mkdir -p certs && openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes -keyout certs/key.pem -out certs/cert.pem -days 365 -subj '/CN=localhost'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "jose": "^6.2.2"
+  }
+}
