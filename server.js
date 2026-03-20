@@ -22,7 +22,10 @@ const app = express();
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json());
 
-// App password (guards everything)
+// Static UI (served before auth so assets are always accessible)
+app.use(express.static(path.join(__dirname, "public")));
+
+// App password (guards API + login/logout)
 app.use(appPassword());
 
 // Cloudflare Access auth on all /api routes
@@ -30,9 +33,6 @@ app.use("/api", cloudflareAccess());
 
 // API routes
 app.use("/api", remoteRoutes);
-
-// Static UI
-app.use(express.static(path.join(__dirname, "public")));
 
 // --- Start server ---
 const PORT = parseInt(process.env.PORT || "3443", 10);

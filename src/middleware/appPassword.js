@@ -82,92 +82,11 @@ export function appPassword() {
       return next();
     }
 
-    // Serve login page for browser requests
+    // Let unauthenticated browser requests through to serve the SPA
     if (req.headers.accept?.includes("text/html")) {
-      return res.send(loginPage());
+      return next();
     }
 
     return res.status(401).json({ error: "Authentication required" });
   };
-}
-
-function loginPage() {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login — Mac Remote Control</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #1a1a2e;
-      color: #eee;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .login-box {
-      background: #16213e;
-      border-radius: 16px;
-      padding: 40px;
-      width: 340px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    }
-    h1 { text-align: center; margin-bottom: 24px; font-size: 1.2em; }
-    input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #333;
-      border-radius: 8px;
-      background: #1a1a2e;
-      color: #eee;
-      font-size: 1em;
-      margin-bottom: 16px;
-      outline: none;
-    }
-    input:focus { border-color: #0f9d58; }
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      background: #0f9d58;
-      color: #fff;
-      font-size: 1em;
-      cursor: pointer;
-    }
-    button:hover { background: #0b7a42; }
-    .error { color: #f44; text-align: center; margin-top: 12px; font-size: 0.9em; }
-  </style>
-</head>
-<body>
-  <div class="login-box">
-    <h1>Mac Remote Control</h1>
-    <form id="login-form">
-      <input type="password" id="password" placeholder="Password" autofocus>
-      <button type="submit">Login</button>
-      <div class="error" id="error"></div>
-    </form>
-  </div>
-  <script>
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const pw = document.getElementById('password').value;
-      const res = await fetch('/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pw }),
-      });
-      if (res.ok) {
-        window.location.reload();
-      } else {
-        document.getElementById('error').textContent = 'Wrong password';
-      }
-    });
-  </script>
-</body>
-</html>`;
 }
