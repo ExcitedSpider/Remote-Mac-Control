@@ -10,7 +10,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 TUNNEL_PID=$!
 
 # Start the server in background
-/opt/homebrew/bin/node "$DIR/server.js" &
+/opt/homebrew/bin/npx tsx "$DIR/server.ts" &
 SERVER_PID=$!
 
 # If either process exits, kill the other and exit

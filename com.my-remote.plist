@@ -9,7 +9,7 @@
     <array>
         <string>/bin/zsh</string>
         <string>-c</string>
-        <string>/opt/homebrew/bin/cloudflared tunnel --config /Users/z5698891/Documents/my-remote/cloudflared-config.yml run my-remote &amp; /opt/homebrew/bin/node /Users/z5698891/Documents/my-remote/server.js &amp; wait</string>
+        <string>/opt/homebrew/bin/cloudflared tunnel --config /Users/z5698891/Documents/my-remote/cloudflared-config.yml run my-remote &amp; /opt/homebrew/bin/npx tsx /Users/z5698891/Documents/my-remote/server.ts &amp; wait</string>
     </array>
 
     <key>WorkingDirectory</key>

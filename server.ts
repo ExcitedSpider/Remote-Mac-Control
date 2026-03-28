@@ -15,12 +15,13 @@ import remoteRoutes from "./src/routes/remote.js";
 import { log } from "./src/logger.js";
 import { setupMetricsWebSocket } from "./src/ws/metricsSocket.js";
 
-process.on("uncaughtException", (err) => {
+process.on("uncaughtException", (err: Error) => {
   log.error(`Uncaught exception: ${err.stack || err.message}`);
   process.exit(1);
 });
-process.on("unhandledRejection", (err) => {
-  log.error(`Unhandled rejection: ${err.stack || err.message}`);
+process.on("unhandledRejection", (err: unknown) => {
+  const message = err instanceof Error ? err.stack || err.message : String(err);
+  log.error(`Unhandled rejection: ${message}`);
 });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -34,7 +35,7 @@ app.use(express.json());
 
 // Attach real client IP from Cloudflare headers
 app.use((req, _res, next) => {
-  req.clientIp = req.headers["cf-connecting-ip"] || req.ip;
+  req.clientIp = (req.headers["cf-connecting-ip"] as string) || req.ip || "";
   next();
 });
 

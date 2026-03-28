@@ -1,16 +1,23 @@
 import { useState } from "react";
-import { toggleService, fetchStatus } from "../api.js";
-import useSystemMetrics from "../hooks/useSystemMetrics.js";
-import SystemMetrics from "./SystemMetrics.jsx";
-import ServiceToggle from "./ServiceToggle.jsx";
-import StatusBar from "./StatusBar.jsx";
+import { toggleService, fetchStatus } from "../api";
+import type { AllStatus } from "../types";
+import useSystemMetrics from "../hooks/useSystemMetrics";
+import SystemMetrics from "./SystemMetrics";
+import ServiceToggle from "./ServiceToggle";
+import StatusBar from "./StatusBar";
 
-export default function Dashboard({ status, onStatusChange, onLogout }) {
+interface DashboardProps {
+  status: AllStatus;
+  onStatusChange: (status: AllStatus) => void;
+  onLogout: () => void;
+}
+
+export default function Dashboard({ status, onStatusChange, onLogout }: DashboardProps) {
   const { metrics, history, wsStatus } = useSystemMetrics(true);
   const [statusMsg, setStatusMsg] = useState({ message: "Connected", type: "success" });
   const [busy, setBusy] = useState(false);
 
-  const handleToggle = async (endpoint, label, enable) => {
+  const handleToggle = async (endpoint: string, label: string, enable: boolean) => {
     setBusy(true);
     setStatusMsg({ message: "Updating...", type: "" });
     try {
@@ -20,11 +27,11 @@ export default function Dashboard({ status, onStatusChange, onLogout }) {
         message: `${label} ${enable ? "enabled" : "disabled"}`,
         type: data.result.success ? "success" : "error",
       });
-    } catch (err) {
-      setStatusMsg({ message: `Error: ${err.message}`, type: "error" });
+    } catch (err: unknown) {
+      setStatusMsg({ message: `Error: ${(err as Error).message}`, type: "error" });
       try {
         const result = await fetchStatus();
-        if (result.authenticated) onStatusChange(result.data);
+        if (result.authenticated) onStatusChange(result.data!);
       } catch {}
     } finally {
       setBusy(false);

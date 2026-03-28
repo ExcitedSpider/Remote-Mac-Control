@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Mac remote control server with Cloudflare Access",
-  "main": "server.js",
+  "main": "server.ts",
   "scripts": {
-    "start": "node server.js",
-    "dev": "ENV_FILE=local.env node server.js & cd frontend && npx vite",
-    "dev:backend": "ENV_FILE=local.env node server.js",
+    "start": "tsx server.ts",
+    "dev": "ENV_FILE=local.env tsx server.ts & cd frontend && npx vite",
+    "dev:backend": "ENV_FILE=local.env tsx server.ts",
     "dev:frontend": "cd frontend && npx vite",
     "build": "cd frontend && npx vite build",
+    "typecheck": "tsc --noEmit && cd frontend && tsc --noEmit",
     "generate-certs": "mkdir -p certs && openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes -keyout certs/key.pem -out certs/cert.pem -days 365 -subj '/CN=localhost'"
   },
   "keywords": [],
@@ -25,7 +26,14 @@
     "ws": "^8.19.0"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^6.0.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2",
     "vite": "^8.0.1"
   }
 }

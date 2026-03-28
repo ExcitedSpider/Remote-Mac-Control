@@ -1,18 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
-import { fetchStatus, login, logout } from "./api.js";
-import LoginPage from "./components/LoginPage.jsx";
-import Dashboard from "./components/Dashboard.jsx";
+import { fetchStatus, login, logout } from "./api";
+import type { AllStatus } from "./types";
+import LoginPage from "./components/LoginPage";
+import Dashboard from "./components/Dashboard";
+
+type AuthState = "loading" | "authenticated" | "unauthenticated";
 
 export default function App() {
-  const [authState, setAuthState] = useState("loading");
-  const [status, setStatus] = useState(null);
+  const [authState, setAuthState] = useState<AuthState>("loading");
+  const [status, setStatus] = useState<AllStatus | null>(null);
 
   const checkAuth = useCallback(async () => {
     setAuthState("loading");
     try {
       const result = await fetchStatus();
       if (result.authenticated) {
-        setStatus(result.data);
+        setStatus(result.data!);
         setAuthState("authenticated");
       } else {
         setAuthState("unauthenticated");
@@ -26,7 +29,7 @@ export default function App() {
     checkAuth();
   }, [checkAuth]);
 
-  const handleLogin = async (password) => {
+  const handleLogin = async (password: string) => {
     await login(password);
     await checkAuth();
   };
@@ -51,7 +54,7 @@ export default function App() {
 
   return (
     <Dashboard
-      status={status}
+      status={status!}
       onStatusChange={setStatus}
       onLogout={handleLogout}
     />

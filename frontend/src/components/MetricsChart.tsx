@@ -7,11 +7,18 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import type { MetricsHistoryEntry } from "../types";
 
 const axisStyle = { fill: "#666", fontSize: 11 };
 const gridStroke = "#2a2a4e";
 
-function ChartTooltip({ active, payload, label }) {
+interface ChartTooltipProps {
+  active?: boolean;
+  payload?: Array<{ dataKey: string; color: string; name: string; value: number }>;
+  label?: string;
+}
+
+function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
   if (!active || !payload?.length) return null;
   return (
     <div style={{ background: "#16213e", border: "1px solid #2a2a4e", borderRadius: 6, padding: "8px 12px", fontSize: "0.8em" }}>
@@ -25,7 +32,14 @@ function ChartTooltip({ active, payload, label }) {
   );
 }
 
-function Chart({ data, dataKey, name, color }) {
+interface ChartProps {
+  data: MetricsHistoryEntry[];
+  dataKey: string;
+  name: string;
+  color: string;
+}
+
+function Chart({ data, dataKey, name, color }: ChartProps) {
   return (
     <div className="metrics-chart">
       <div className="metrics-chart-label">{name}</div>
@@ -33,7 +47,7 @@ function Chart({ data, dataKey, name, color }) {
         <LineChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
           <XAxis dataKey="time" tick={axisStyle} interval="preserveStartEnd" />
-          <YAxis domain={[0, 100]} tick={axisStyle} tickFormatter={(v) => `${v}%`} />
+          <YAxis domain={[0, 100]} tick={axisStyle} tickFormatter={(v: number) => `${v}%`} />
           <Tooltip content={<ChartTooltip />} />
           <Line
             type="monotone"
@@ -50,7 +64,11 @@ function Chart({ data, dataKey, name, color }) {
   );
 }
 
-export default function MetricsChart({ history }) {
+interface MetricsChartProps {
+  history: MetricsHistoryEntry[];
+}
+
+export default function MetricsChart({ history }: MetricsChartProps) {
   return (
     <div className="metrics-charts">
       <Chart data={history} dataKey="cpu" name="CPU" color="#8884d8" />

@@ -1,4 +1,12 @@
-export default function ServiceToggle({ label, description, checked, disabled, onChange }) {
+interface ServiceToggleProps {
+  label: string;
+  description: string;
+  checked: boolean;
+  disabled: boolean;
+  onChange: (enabled: boolean) => void;
+}
+
+export default function ServiceToggle({ label, description, checked, disabled, onChange }: ServiceToggleProps) {
   return (
     <div className="service">
       <div className="service-info">
