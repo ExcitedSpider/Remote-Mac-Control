@@ -29,20 +29,20 @@ export interface MetricsHistoryEntry {
   memory: number;
 }
 
-export interface ContainerPort {
-  IP?: string;
-  PrivatePort: number;
-  PublicPort?: number;
-  Type: string;
+export interface ContainerStats {
+  cpuPercent: number | null;
+  memoryUsageMB: number;
+  memoryLimitMB: number;
+  memoryPercent: number;
+  pids: number;
 }
 
-export interface ContainerInfo {
-  Id: string;
-  Names: string[];
-  Image: string;
-  Command: string;
-  Created: number;
-  State: string;
-  Status: string;
-  Ports: ContainerPort[];
+export interface ContainerWithStats {
+  id: string;
+  name: string;
+  image: string;
+  state: string;
+  status: string;
+  created: number;
+  stats: ContainerStats | null;
 }
