@@ -1,24 +1,27 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import type { SystemMetricsData, MetricsHistoryEntry } from "../types";
 
 const MAX_HISTORY = 30;
 
-function formatTime(date) {
+type WsStatus = "disconnected" | "connecting" | "connected";
+
+function formatTime(date: Date): string {
   return date.toLocaleTimeString("en-US", { hour12: false });
 }
 
-export default function useSystemMetrics(enabled) {
-  const [metrics, setMetrics] = useState(null);
-  const [history, setHistory] = useState([]);
-  const [wsStatus, setWsStatus] = useState("disconnected");
-  const wsRef = useRef(null);
-  const reconnectTimer = useRef(null);
+export default function useSystemMetrics(enabled: boolean) {
+  const [metrics, setMetrics] = useState<SystemMetricsData | null>(null);
+  const [history, setHistory] = useState<MetricsHistoryEntry[]>([]);
+  const [wsStatus, setWsStatus] = useState<WsStatus>("disconnected");
+  const wsRef = useRef<WebSocket | null>(null);
+  const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleMessage = useCallback((event) => {
+  const handleMessage = useCallback((event: MessageEvent) => {
     try {
-      const data = JSON.parse(event.data);
+      const data: SystemMetricsData = JSON.parse(event.data);
       setMetrics(data);
       setHistory((prev) => {
-        const entry = {
+        const entry: MetricsHistoryEntry = {
           time: formatTime(new Date()),
           cpu: data.cpu.usagePercent,
           memory: data.memory.usagePercent,
@@ -51,7 +54,7 @@ export default function useSystemMetrics(enabled) {
     connect();
 
     return () => {
-      clearTimeout(reconnectTimer.current);
+      if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
       if (wsRef.current) {
         wsRef.current.onclose = null;
         wsRef.current.close();

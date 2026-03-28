@@ -13,16 +13,17 @@ router.get("/status", async (req, res) => {
   try {
     const status = await getAllStatus();
     res.json(status);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } catch (err: unknown) {
+    res.status(500).json({ error: (err as Error).message });
   }
 });
 
 // POST /api/ssh { enable: true|false }
 router.post("/ssh", async (req, res) => {
-  const { enable } = req.body;
+  const { enable } = req.body as { enable: unknown };
   if (typeof enable !== "boolean") {
-    return res.status(400).json({ error: '"enable" must be a boolean' });
+    res.status(400).json({ error: '"enable" must be a boolean' });
+    return;
   }
   log.warn(`SSH ${enable ? "ENABLE" : "DISABLE"} requested from ${req.clientIp}`);
   const result = await setSSH(enable);
@@ -33,9 +34,10 @@ router.post("/ssh", async (req, res) => {
 
 // POST /api/file-sharing { enable: true|false }
 router.post("/file-sharing", async (req, res) => {
-  const { enable } = req.body;
+  const { enable } = req.body as { enable: unknown };
   if (typeof enable !== "boolean") {
-    return res.status(400).json({ error: '"enable" must be a boolean' });
+    res.status(400).json({ error: '"enable" must be a boolean' });
+    return;
   }
   log.warn(`FILE SHARING ${enable ? "ENABLE" : "DISABLE"} requested from ${req.clientIp}`);
   const result = await setFileSharing(enable);

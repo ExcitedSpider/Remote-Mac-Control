@@ -1,14 +1,15 @@
+import type { RequestHandler } from "express";
 import * as jose from "jose";
 import { log } from "../logger.js";
 
 const CERTS_URL_SUFFIX = "/cdn-cgi/access/certs";
-let cachedJWKS = null;
+let cachedJWKS: jose.FlattenedJWSInput extends never ? never : ReturnType<typeof jose.createRemoteJWKSet> | null = null;
 let cacheExpiry = 0;
 
 /**
  * Fetches and caches Cloudflare Access public keys.
  */
-async function getJWKS(teamDomain) {
+async function getJWKS(teamDomain: string) {
   const now = Date.now();
   if (cachedJWKS && now < cacheExpiry) return cachedJWKS;
 
@@ -27,7 +28,7 @@ async function getJWKS(teamDomain) {
  *
  * Set CF_ACCESS_ENABLED=false to bypass (for local dev).
  */
-export function cloudflareAccess() {
+export function cloudflareAccess(): RequestHandler {
   return async (req, res, next) => {
     // Allow bypassing for local development
     if (process.env.CF_ACCESS_ENABLED === "false") {
@@ -42,17 +43,17 @@ export function cloudflareAccess() {
       log.error(
         "CF_TEAM_DOMAIN and CF_AUD must be set (or set CF_ACCESS_ENABLED=false to bypass)"
       );
-      return res.status(500).json({ error: "Server misconfiguration" });
+      res.status(500).json({ error: "Server misconfiguration" });
+      return;
     }
 
     const token =
-      req.headers["cf-access-jwt-assertion"] ||
+      req.headers["cf-access-jwt-assertion"] as string | undefined ||
       req.cookies?.CF_Authorization;
 
     if (!token) {
-      return res
-        .status(403)
-        .json({ error: "Missing Cloudflare Access token" });
+      res.status(403).json({ error: "Missing Cloudflare Access token" });
+      return;
     }
 
     try {
@@ -63,13 +64,13 @@ export function cloudflareAccess() {
       });
 
       req.cfAccess = {
-        email: payload.email,
-        identity: payload,
+        email: payload.email as string | undefined,
+        identity: payload as Record<string, unknown>,
       };
       next();
-    } catch (err) {
-      log.error("CF Access JWT validation failed:", err.message);
-      return res.status(403).json({ error: "Invalid access token" });
+    } catch (err: unknown) {
+      log.error("CF Access JWT validation failed:", (err as Error).message);
+      res.status(403).json({ error: "Invalid access token" });
     }
   };
 }

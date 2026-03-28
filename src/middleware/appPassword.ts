@@ -1,19 +1,21 @@
 import crypto from "node:crypto";
+import type { RequestHandler } from "express";
 import { log } from "../logger.js";
 
 const COOKIE_NAME = "my-remote-auth";
 const TOKEN_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 // In-memory set of valid session tokens
-const validTokens = new Map();
+const validTokens = new Map<string, number>();
 
-function generateToken() {
+function generateToken(): string {
   const token = crypto.randomBytes(32).toString("hex");
   validTokens.set(token, Date.now() + TOKEN_TTL);
   return token;
 }
 
-function isValidToken(token) {
+function isValidToken(token: string | undefined): boolean {
+  if (!token) return false;
   const expiry = validTokens.get(token);
   if (!expiry) return false;
   if (Date.now() > expiry) {
@@ -23,8 +25,8 @@ function isValidToken(token) {
   return true;
 }
 
-function parseCookies(header) {
-  const cookies = {};
+function parseCookies(header: string | undefined): Record<string, string> {
+  const cookies: Record<string, string> = {};
   if (!header) return cookies;
   for (const part of header.split(";")) {
     const [key, ...rest] = part.split("=");
@@ -35,7 +37,7 @@ function parseCookies(header) {
 
 export { parseCookies, isValidToken, COOKIE_NAME };
 
-export function appPassword() {
+export function appPassword(): RequestHandler {
   const password = process.env.APP_PASSWORD;
 
   return (req, res, next) => {
@@ -52,14 +54,16 @@ export function appPassword() {
       );
       if (req.headers.accept?.includes("text/html")) {
         res.setHeader("Location", "/");
-        return res.status(302).end();
+        res.status(302).end();
+        return;
       }
-      return res.json({ ok: true });
+      res.json({ ok: true });
+      return;
     }
 
     // Login endpoint
     if (req.method === "POST" && req.path === "/login") {
-      const { password: submitted } = req.body || {};
+      const { password: submitted } = (req.body as { password?: string }) || {};
       const submittedBuf = Buffer.from(submitted || "");
       const passwordBuf = Buffer.from(password);
       if (
@@ -72,10 +76,12 @@ export function appPassword() {
           `${COOKIE_NAME}=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${TOKEN_TTL / 1000}`
         );
         log.info(`LOGIN SUCCESS from ${req.clientIp}`);
-        return res.json({ ok: true });
+        res.json({ ok: true });
+        return;
       }
       log.warn(`LOGIN FAILED from ${req.clientIp}`);
-      return res.status(401).json({ error: "Wrong password" });
+      res.status(401).json({ error: "Wrong password" });
+      return;
     }
 
     // Check session cookie
@@ -89,6 +95,6 @@ export function appPassword() {
       return next();
     }
 
-    return res.status(401).json({ error: "Authentication required" });
+    res.status(401).json({ error: "Authentication required" });
   };
 }

@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-function loadEnvPort() {
+function loadEnvPort(): string {
   const envFile = process.env.ENV_FILE || "../local.env";
   try {
     const content = readFileSync(envFile, "utf-8");

@@ -3,28 +3,42 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 
+interface CommandResult {
+  success: boolean;
+  stdout?: string;
+  stderr?: string;
+  error?: string;
+}
+
+interface ServiceStatus {
+  enabled: boolean;
+  raw?: string;
+  error?: string;
+}
+
 /**
  * Execute a command with sudo.
  * The server process must either run as root or have NOPASSWD sudo
  * configured for these specific commands.
  */
-async function sudoExec(cmd, args) {
+async function sudoExec(cmd: string, args: string[]): Promise<CommandResult> {
   try {
     const { stdout, stderr } = await execFileAsync("/usr/bin/sudo", [cmd, ...args], {
       timeout: 10_000,
     });
     return { success: true, stdout: stdout.trim(), stderr: stderr.trim() };
-  } catch (err) {
+  } catch (err: unknown) {
+    const execErr = err as { stderr?: string; message: string };
     return {
       success: false,
-      error: err.stderr?.trim() || err.message,
+      error: execErr.stderr?.trim() || execErr.message,
     };
   }
 }
 
 // --- SSH (Remote Login) ---
 
-export async function getSSHStatus() {
+export async function getSSHStatus(): Promise<ServiceStatus> {
   try {
     const { stdout } = await execFileAsync("/usr/bin/sudo", [
       "/usr/sbin/systemsetup",
@@ -32,12 +46,12 @@ export async function getSSHStatus() {
     ]);
     const on = /on/i.test(stdout);
     return { enabled: on, raw: stdout.trim() };
-  } catch (err) {
-    return { enabled: false, error: err.message };
+  } catch (err: unknown) {
+    return { enabled: false, error: (err as Error).message };
   }
 }
 
-export async function setSSH(enable) {
+export async function setSSH(enable: boolean): Promise<CommandResult> {
   const flag = enable ? "on" : "off";
   // -f flag forces off without confirmation prompt
   const args = enable
@@ -50,7 +64,7 @@ export async function setSSH(enable) {
 
 const SMB_PLIST = "/System/Library/LaunchDaemons/com.apple.smbd.plist";
 
-export async function getFileSharingStatus() {
+export async function getFileSharingStatus(): Promise<ServiceStatus> {
   try {
     const { stdout } = await execFileAsync("/usr/bin/sudo", [
       "/bin/launchctl",
@@ -64,14 +78,19 @@ export async function getFileSharingStatus() {
   }
 }
 
-export async function setFileSharing(enable) {
+export async function setFileSharing(enable: boolean): Promise<CommandResult> {
   const action = enable ? "load" : "unload";
   return sudoExec("/bin/launchctl", [action, "-w", SMB_PLIST]);
 }
 
 // --- Combined status ---
 
-export async function getAllStatus() {
+export interface AllStatus {
+  ssh: ServiceStatus;
+  fileSharing: ServiceStatus;
+}
+
+export async function getAllStatus(): Promise<AllStatus> {
   const [ssh, fileSharing] = await Promise.all([
     getSSHStatus(),
     getFileSharingStatus(),

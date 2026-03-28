@@ -1,13 +1,15 @@
-import { WebSocketServer } from "ws";
+import type http from "node:http";
+import type https from "node:https";
+import { WebSocketServer, WebSocket } from "ws";
 import { parseCookies, isValidToken, COOKIE_NAME } from "../middleware/appPassword.js";
 import { getSystemMetrics } from "../services/systemMetrics.js";
 import { log } from "../logger.js";
 
 const BROADCAST_INTERVAL = 2000;
 
-export function setupMetricsWebSocket(httpServer) {
+export function setupMetricsWebSocket(httpServer: http.Server | https.Server) {
   const wss = new WebSocketServer({ noServer: true });
-  let broadcastTimer = null;
+  let broadcastTimer: ReturnType<typeof setInterval> | null = null;
 
   httpServer.on("upgrade", (req, socket, head) => {
     if (req.url !== "/ws/metrics") {
@@ -35,7 +37,7 @@ export function setupMetricsWebSocket(httpServer) {
   function broadcast() {
     const data = JSON.stringify(getSystemMetrics());
     for (const client of wss.clients) {
-      if (client.readyState === 1) {
+      if (client.readyState === WebSocket.OPEN) {
         client.send(data);
       }
     }

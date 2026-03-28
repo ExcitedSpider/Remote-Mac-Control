@@ -1,9 +1,30 @@
 import os from "node:os";
 import { execSync } from "node:child_process";
 
-let previousCpuTimes = null;
+interface CpuTimes {
+  idle: number;
+  total: number;
+}
 
-function getCpuTimes() {
+interface MemoryInfo {
+  totalMB: number;
+  freeMB: number;
+  usedMB: number;
+  usagePercent: number;
+}
+
+export interface SystemMetrics {
+  cpu: {
+    usagePercent: number | null;
+    coreCount: number;
+  };
+  memory: MemoryInfo;
+  timestamp: number;
+}
+
+let previousCpuTimes: CpuTimes | null = null;
+
+function getCpuTimes(): CpuTimes {
   const cpus = os.cpus();
   let totalIdle = 0;
   let totalTick = 0;
@@ -15,7 +36,7 @@ function getCpuTimes() {
   return { idle: totalIdle, total: totalTick };
 }
 
-function getMemoryInfo() {
+function getMemoryInfo(): MemoryInfo {
   const totalBytes = os.totalmem();
   const totalMB = Math.round(totalBytes / 1024 / 1024);
 
@@ -25,7 +46,7 @@ function getMemoryInfo() {
   if (process.platform === "darwin") {
     try {
       const output = execSync("vm_stat", { encoding: "utf8" });
-      const pages = {};
+      const pages: Record<string, number> = {};
       for (const line of output.split("\n")) {
         const match = line.match(/^(.+?):\s+([\d.]+)/);
         if (match) pages[match[1].trim()] = parseInt(match[2], 10);
@@ -60,9 +81,9 @@ function getMemoryInfo() {
   };
 }
 
-export function getSystemMetrics() {
+export function getSystemMetrics(): SystemMetrics {
   const currentCpuTimes = getCpuTimes();
-  let cpuUsagePercent = null;
+  let cpuUsagePercent: number | null = null;
 
   if (previousCpuTimes) {
     const idleDelta = currentCpuTimes.idle - previousCpuTimes.idle;

@@ -1,6 +1,13 @@
-import MetricsChart from "./MetricsChart.jsx";
+import type { SystemMetricsData, MetricsHistoryEntry } from "../types";
+import MetricsChart from "./MetricsChart";
 
-export default function SystemMetrics({ metrics, wsStatus, history }) {
+interface SystemMetricsProps {
+  metrics: SystemMetricsData | null;
+  wsStatus: string;
+  history: MetricsHistoryEntry[];
+}
+
+export default function SystemMetrics({ metrics, wsStatus, history }: SystemMetricsProps) {
   const connected = wsStatus === "connected";
 
   return (

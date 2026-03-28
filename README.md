@@ -4,7 +4,7 @@ Web server for remotely controlling macOS services (SSH, File Sharing), protecte
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 18+ (with `tsx` for TypeScript execution)
 - macOS
 - `cloudflared` CLI (for Cloudflare Tunnel)
 
@@ -105,10 +105,24 @@ launchctl list | grep my-remote
 tail -f logs/server.log logs/server.error.log
 ```
 
-For local development (no auth, no daemon):
+### Local development
+
+`npm run dev` starts both the Express backend (via `tsx`) and the Vite dev server with hot-reload. Auth is disabled by default via `local.env`:
+
+```
+PORT=3001          # Backend port
+USE_HTTPS=false
+APP_PASSWORD=      # Empty = no password required
+CF_ACCESS_ENABLED=false
+```
+
+The Vite dev server runs on `http://localhost:5173` and proxies API/WebSocket requests to the backend. It reads `PORT` from `local.env` automatically so the proxy target stays in sync.
 
 ```bash
-npm run dev
+npm run dev           # Start both backend + Vite dev server
+npm run dev:backend   # Backend only
+npm run dev:frontend  # Vite dev server only
+npm run typecheck     # Run TypeScript type checking (backend + frontend)
 ```
 
 ## API
