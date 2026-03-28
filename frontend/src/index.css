@@ -6,9 +6,9 @@ body {
   color: #eee;
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 24px;
+  padding: 48px 24px;
 }
 
 .dashboard-wrapper {
