@@ -15,6 +15,7 @@ import remoteRoutes from "./src/routes/remote.js";
 import containerRoutes from "./src/routes/containers.js";
 import { log } from "./src/logger.js";
 import { setupMetricsWebSocket } from "./src/ws/metricsSocket.js";
+import { setupContainersWebSocket } from "./src/ws/containersSocket.js";
 
 process.on("uncaughtException", (err: Error) => {
   log.error(`Uncaught exception: ${err.stack || err.message}`);
@@ -79,6 +80,7 @@ if (USE_HTTPS) {
     app
   );
   setupMetricsWebSocket(server);
+  setupContainersWebSocket(server);
 
   server.listen(PORT, () => {
     log.info(`HTTPS server running on https://localhost:${PORT}`);
@@ -86,6 +88,7 @@ if (USE_HTTPS) {
 } else {
   const server = http.createServer(app);
   setupMetricsWebSocket(server);
+  setupContainersWebSocket(server);
   server.listen(PORT, () => {
     log.info(`HTTP server running on http://localhost:${PORT}`);
   });
