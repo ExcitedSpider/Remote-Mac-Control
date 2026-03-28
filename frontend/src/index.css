@@ -13,6 +13,9 @@ body {
 
 .dashboard-wrapper {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .dashboard-wrapper > .btn-logout {
@@ -256,4 +259,89 @@ body {
   font-size: 0.75em;
   color: #888;
   margin-bottom: 4px;
+}
+
+/* Containers */
+.containers-panel {
+  background: #16213e;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.containers-panel .header {
+  margin-bottom: 16px;
+}
+
+.container-count {
+  font-size: 0.8em;
+  color: #888;
+}
+
+.container-error {
+  color: #f44;
+  font-size: 0.85em;
+  padding: 12px;
+  background: #1a1a2e;
+  border-radius: 8px;
+}
+
+.container-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.container-row {
+  background: #1a1a2e;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.container-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.container-state {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #555;
+  flex-shrink: 0;
+}
+
+.container-state-running { background: #0f9d58; }
+.container-state-exited { background: #f44; }
+.container-state-paused { background: #fb0; }
+
+.container-name {
+  font-size: 0.9em;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.container-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75em;
+  color: #888;
+  padding-left: 16px;
+}
+
+.container-image {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 70%;
+}
+
+.container-status {
+  white-space: nowrap;
+  flex-shrink: 0;
 }

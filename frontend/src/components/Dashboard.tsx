@@ -5,6 +5,7 @@ import useSystemMetrics from "../hooks/useSystemMetrics";
 import SystemMetrics from "./SystemMetrics";
 import ServiceToggle from "./ServiceToggle";
 import StatusBar from "./StatusBar";
+import ContainerList from "./ContainerList";
 
 interface DashboardProps {
   status: AllStatus;
@@ -68,6 +69,7 @@ export default function Dashboard({ status, onStatusChange, onLogout }: Dashboar
 
       <SystemMetrics metrics={metrics} wsStatus={wsStatus} history={history} />
     </div>
+    <ContainerList />
     </div>
   );
 }

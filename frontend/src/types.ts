@@ -28,3 +28,21 @@ export interface MetricsHistoryEntry {
   cpu: number | null;
   memory: number;
 }
+
+export interface ContainerPort {
+  IP?: string;
+  PrivatePort: number;
+  PublicPort?: number;
+  Type: string;
+}
+
+export interface ContainerInfo {
+  Id: string;
+  Names: string[];
+  Image: string;
+  Command: string;
+  Created: number;
+  State: string;
+  Status: string;
+  Ports: ContainerPort[];
+}

@@ -1,4 +1,4 @@
-import type { AllStatus } from "./types";
+import type { AllStatus, ContainerInfo } from "./types";
 
 interface StatusResult {
   authenticated: boolean;
@@ -29,6 +29,12 @@ export async function login(password: string): Promise<true> {
 
 export async function logout(): Promise<void> {
   await fetch("/logout", { method: "POST" });
+}
+
+export async function fetchContainers(): Promise<ContainerInfo[]> {
+  const res = await fetch("/api/containers");
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
 }
 
 export async function toggleService(endpoint: string, enable: boolean): Promise<ToggleResult> {
