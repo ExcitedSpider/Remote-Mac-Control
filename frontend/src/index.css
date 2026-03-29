@@ -6,9 +6,10 @@ body {
   color: #eee;
   min-height: 100vh;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding: 48px 24px;
+  padding: 16px 24px;
+  overflow-y: auto;
 }
 
 .dashboard-wrapper {
