@@ -17,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@radix-ui/react-tabs": "^1.1.13",
     "express": "^5.2.1",
     "helmet": "^8.1.0",
     "jose": "^6.2.2",
