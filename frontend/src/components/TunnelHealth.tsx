@@ -62,28 +62,28 @@ function StatValue({ label, value }: { label: string; value: string }) {
 }
 
 export default function TunnelHealth() {
-  const { health, loading, error } = useTunnelHealth(true);
+  const { health, wsStatus } = useTunnelHealth(true);
+  const connected = wsStatus === "connected";
 
   return (
     <div className="tunnel-panel">
       <div className="header">
         <h1>Tunnel</h1>
-        {health && (
-          <div className="tunnel-header-right">
-            <span className="tunnel-status-label">{health.overallStatus}</span>
-            <StatusDot status={health.overallStatus} />
-          </div>
-        )}
+        <div className="tunnel-header-right">
+          {health && (
+            <>
+              <span className="tunnel-status-label">{health.overallStatus}</span>
+              <StatusDot status={health.overallStatus} />
+            </>
+          )}
+          {!health && (
+            <span className={`ws-indicator ${connected ? "ws-connected" : ""}`} title={wsStatus} />
+          )}
+        </div>
       </div>
 
-      {loading && !health && (
-        <div className="metric-card metric-placeholder">Checking tunnel health...</div>
-      )}
-
-      {error && !health && (
-        <div className="metric-card metric-placeholder" style={{ color: "#f44" }}>
-          {error}
-        </div>
+      {wsStatus === "connecting" && !health && (
+        <div className="metric-card metric-placeholder">Connecting...</div>
       )}
 
       {health && (

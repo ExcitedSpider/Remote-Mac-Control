@@ -1,38 +1,52 @@
-import { useState, useEffect } from "react";
-import { fetchTunnelHealth } from "../api";
+import { useState, useEffect, useRef, useCallback } from "react";
 import type { TunnelHealth } from "../types";
+
+type WsStatus = "disconnected" | "connecting" | "connected";
 
 export default function useTunnelHealth(enabled: boolean) {
   const [health, setHealth] = useState<TunnelHealth | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [wsStatus, setWsStatus] = useState<WsStatus>("disconnected");
+  const wsRef = useRef<WebSocket | null>(null);
+  const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleMessage = useCallback((event: MessageEvent) => {
+    try {
+      const data: TunnelHealth = JSON.parse(event.data);
+      setHealth(data);
+    } catch {}
+  }, []);
 
   useEffect(() => {
     if (!enabled) return;
-    let cancelled = false;
 
-    async function poll() {
-      try {
-        const data = await fetchTunnelHealth();
-        if (!cancelled) {
-          setHealth(data);
-          setError(null);
-        }
-      } catch (err) {
-        if (!cancelled) setError((err as Error).message);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+    function connect() {
+      const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const ws = new WebSocket(`${proto}//${window.location.host}/ws/tunnel`);
+      wsRef.current = ws;
+      setWsStatus("connecting");
+
+      ws.onopen = () => setWsStatus("connected");
+      ws.onmessage = handleMessage;
+
+      ws.onclose = () => {
+        setWsStatus("disconnected");
+        wsRef.current = null;
+        reconnectTimer.current = setTimeout(connect, 3000);
+      };
     }
 
-    poll();
-    const timer = setInterval(poll, 10_000);
+    connect();
 
     return () => {
-      cancelled = true;
-      clearInterval(timer);
+      if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
+      if (wsRef.current) {
+        wsRef.current.onclose = null;
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+      setWsStatus("disconnected");
     };
-  }, [enabled]);
+  }, [enabled, handleMessage]);
 
-  return { health, loading, error };
+  return { health, wsStatus };
 }
