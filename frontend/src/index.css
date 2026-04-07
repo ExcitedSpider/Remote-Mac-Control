@@ -17,7 +17,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  width: min(100%, 844px);
+  min-width: 844px;
 }
 
 .dashboard-wrapper > .btn-logout {
@@ -533,6 +533,11 @@ body {
 @media (max-width: 900px) {
   body {
     padding: 56px 12px 24px;
+  }
+
+  .dashboard-wrapper {
+    min-width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
   }
 
   .dashboard-layout {
