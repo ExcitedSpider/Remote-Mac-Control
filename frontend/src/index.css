@@ -482,3 +482,45 @@ body {
   margin-left: auto;
   flex-shrink: 0;
 }
+
+/* Responsive: stack panels and shrink padding on small screens */
+@media (max-width: 900px) {
+  body {
+    padding: 56px 12px 24px;
+  }
+
+  .dashboard-layout {
+    flex-direction: column;
+  }
+
+  .container,
+  .system-metrics {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .container {
+    padding: 24px;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .dashboard-wrapper > .btn-logout {
+    top: -44px;
+  }
+
+  .tunnel-route {
+    flex-wrap: wrap;
+  }
+
+  .tunnel-route-service {
+    word-break: break-all;
+  }
+
+  .container-stats-row {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
