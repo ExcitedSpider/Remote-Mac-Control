@@ -13,6 +13,7 @@ import { cloudflareAccess } from "./src/middleware/cloudflareAccess.js";
 import { appPassword } from "./src/middleware/appPassword.js";
 import remoteRoutes from "./src/routes/remote.js";
 import containerRoutes from "./src/routes/containers.js";
+import tunnelRoutes from "./src/routes/tunnel.js";
 import { log } from "./src/logger.js";
 import { setupMetricsWebSocket } from "./src/ws/metricsSocket.js";
 import { setupContainersWebSocket } from "./src/ws/containersSocket.js";
@@ -53,6 +54,7 @@ app.use("/api", cloudflareAccess());
 // API routes
 app.use("/api", remoteRoutes);
 app.use("/api", containerRoutes);
+app.use("/api", tunnelRoutes);
 
 // --- Start server ---
 const PORT = parseInt(process.env.PORT || "3443", 10);

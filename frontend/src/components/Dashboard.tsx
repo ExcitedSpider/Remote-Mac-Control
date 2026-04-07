@@ -6,6 +6,7 @@ import SystemMetrics from "./SystemMetrics";
 import ServiceToggle from "./ServiceToggle";
 import StatusBar from "./StatusBar";
 import ContainerList from "./ContainerList";
+import TunnelHealth from "./TunnelHealth";
 
 interface DashboardProps {
   status: AllStatus;
@@ -70,6 +71,7 @@ export default function Dashboard({ status, onStatusChange, onLogout }: Dashboar
       <SystemMetrics metrics={metrics} wsStatus={wsStatus} history={history} />
     </div>
     <ContainerList />
+    <TunnelHealth />
     </div>
   );
 }

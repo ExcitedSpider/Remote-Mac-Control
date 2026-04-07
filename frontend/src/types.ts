@@ -46,3 +46,31 @@ export interface ContainerWithStats {
   created: number;
   stats: ContainerStats | null;
 }
+
+export interface IngressRoute {
+  hostname: string | null;
+  service: string;
+  port: number | null;
+  portOpen: boolean | null;
+}
+
+export interface TunnelHealth {
+  processRunning: boolean;
+  ready: {
+    reachable: boolean;
+    readyConnections: number;
+    connectorId: string | null;
+  };
+  metrics: {
+    reachable: boolean;
+    version: string | null;
+    uptimeSeconds: number | null;
+    haConnections: number | null;
+    totalRequests: number | null;
+    requestErrors: number | null;
+    activeEdgeLocations: string[];
+  };
+  ingress: IngressRoute[];
+  overallStatus: "healthy" | "degraded" | "down" | "unknown";
+  timestamp: number;
+}
