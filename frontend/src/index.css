@@ -399,15 +399,55 @@ body {
   flex-shrink: 0;
 }
 
-.tunnel-section-label {
-  font-size: 0.75em;
+.tunnel-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tunnel-card {
+  background: #1a1a2e;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.tunnel-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.tunnel-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tunnel-card-name {
+  font-size: 0.95em;
+  font-weight: 500;
+  color: #e2e2e2;
+}
+
+.tunnel-card-source {
+  font-size: 0.65em;
   color: #666;
   text-transform: uppercase;
-  margin-bottom: 6px;
+  background: #2a2a4e;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.tunnel-card-conns {
+  font-size: 0.75em;
+  color: #888;
 }
 
 .tunnel-routes {
-  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .tunnel-route {
@@ -441,11 +481,4 @@ body {
   display: inline-block;
   margin-left: auto;
   flex-shrink: 0;
-}
-
-.tunnel-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding-top: 8px;
 }

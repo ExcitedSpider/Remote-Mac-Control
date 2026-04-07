@@ -1,25 +1,11 @@
 import useTunnelHealth from "../hooks/useTunnelHealth";
-import type { IngressRoute } from "../types";
-
-function formatUptime(seconds: number): string {
-  const days = Math.floor(seconds / 86400);
-  const hours = Math.floor((seconds % 86400) / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  if (days > 0) return `${days}d ${hours}h`;
-  if (hours > 0) return `${hours}h ${mins}m`;
-  return `${mins}m`;
-}
-
-function formatNumber(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-  return String(n);
-}
+import type { IngressRoute, TunnelInfo } from "../types";
 
 const STATUS_COLORS: Record<string, string> = {
   healthy: "#0f9d58",
   degraded: "#fb0",
   down: "#f44",
+  inactive: "#888",
   unknown: "#555",
 };
 
@@ -52,11 +38,30 @@ function RouteRow({ route }: { route: IngressRoute }) {
   );
 }
 
-function StatValue({ label, value }: { label: string; value: string }) {
+function TunnelCard({ tunnel }: { tunnel: TunnelInfo }) {
+  const colos = tunnel.connections.map((c) => c.colo);
+  const coloSummary = colos.length > 0 ? Array.from(new Set(colos)).join(", ") : "no connections";
+
   return (
-    <div className="container-stat">
-      <span className="container-stat-label">{label}</span>
-      <span className="container-stat-value">{value}</span>
+    <div className="tunnel-card">
+      <div className="tunnel-card-header">
+        <div className="tunnel-card-title">
+          <StatusDot status={tunnel.status} />
+          <span className="tunnel-card-name">{tunnel.name}</span>
+          <span className="tunnel-card-source">{tunnel.configSource}</span>
+        </div>
+        <div className="tunnel-card-conns">
+          {tunnel.connections.length} conn · {coloSummary}
+        </div>
+      </div>
+
+      {tunnel.ingress.length > 0 && (
+        <div className="tunnel-routes">
+          {tunnel.ingress.map((route, i) => (
+            <RouteRow key={i} route={route} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -68,17 +73,10 @@ export default function TunnelHealth() {
   return (
     <div className="tunnel-panel">
       <div className="header">
-        <h1>Tunnel</h1>
+        <h1>Tunnels</h1>
         <div className="tunnel-header-right">
-          {health && (
-            <>
-              <span className="tunnel-status-label">{health.overallStatus}</span>
-              <StatusDot status={health.overallStatus} />
-            </>
-          )}
-          {!health && (
-            <span className={`ws-indicator ${connected ? "ws-connected" : ""}`} title={wsStatus} />
-          )}
+          {health && <span className="tunnel-status-label">{health.tunnels.length} tunnels</span>}
+          <span className={`ws-indicator ${connected ? "ws-connected" : ""}`} title={wsStatus} />
         </div>
       </div>
 
@@ -86,45 +84,22 @@ export default function TunnelHealth() {
         <div className="metric-card metric-placeholder">Connecting...</div>
       )}
 
-      {health && (
-        <>
-          {health.ingress.length > 0 && (
-            <div className="tunnel-routes">
-              <div className="tunnel-section-label">Routes</div>
-              {health.ingress.map((route, i) => (
-                <RouteRow key={i} route={route} />
-              ))}
-            </div>
-          )}
+      {health && !health.apiAvailable && (
+        <div className="metric-card metric-placeholder" style={{ color: "#f44" }}>
+          {health.apiError || "Cloudflare API unavailable"}
+        </div>
+      )}
 
-          <div className="tunnel-stats">
-            <StatValue
-              label="Conn"
-              value={String(health.ready.readyConnections)}
-            />
-            {health.metrics.activeEdgeLocations.length > 0 && (
-              <StatValue
-                label="Edge"
-                value={health.metrics.activeEdgeLocations.join(", ")}
-              />
-            )}
-            {health.metrics.uptimeSeconds != null && (
-              <StatValue
-                label="Uptime"
-                value={formatUptime(health.metrics.uptimeSeconds)}
-              />
-            )}
-            {health.metrics.totalRequests != null && (
-              <StatValue
-                label="Reqs"
-                value={formatNumber(health.metrics.totalRequests)}
-              />
-            )}
-            {health.metrics.version && (
-              <StatValue label="Ver" value={health.metrics.version} />
-            )}
-          </div>
-        </>
+      {health && health.apiAvailable && health.tunnels.length === 0 && (
+        <div className="metric-card metric-placeholder">No tunnels found</div>
+      )}
+
+      {health && health.tunnels.length > 0 && (
+        <div className="tunnel-cards">
+          {health.tunnels.map((t) => (
+            <TunnelCard key={t.id} tunnel={t} />
+          ))}
+        </div>
       )}
     </div>
   );

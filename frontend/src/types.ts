@@ -54,23 +54,25 @@ export interface IngressRoute {
   portOpen: boolean | null;
 }
 
-export interface TunnelHealth {
-  processRunning: boolean;
-  ready: {
-    reachable: boolean;
-    readyConnections: number;
-    connectorId: string | null;
-  };
-  metrics: {
-    reachable: boolean;
-    version: string | null;
-    uptimeSeconds: number | null;
-    haConnections: number | null;
-    totalRequests: number | null;
-    requestErrors: number | null;
-    activeEdgeLocations: string[];
-  };
+export interface TunnelConnection {
+  colo: string;
+  originIp: string;
+  openedAt: string;
+}
+
+export interface TunnelInfo {
+  id: string;
+  name: string;
+  status: string;
+  configSource: "local" | "cloudflare";
+  remoteConfig: boolean;
+  connections: TunnelConnection[];
   ingress: IngressRoute[];
-  overallStatus: "healthy" | "degraded" | "down" | "unknown";
+}
+
+export interface TunnelHealth {
+  apiAvailable: boolean;
+  apiError: string | null;
+  tunnels: TunnelInfo[];
   timestamp: number;
 }
