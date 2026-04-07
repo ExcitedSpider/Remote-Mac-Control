@@ -13,6 +13,7 @@ import { cloudflareAccess } from "./src/middleware/cloudflareAccess.js";
 import { appPassword } from "./src/middleware/appPassword.js";
 import remoteRoutes from "./src/routes/remote.js";
 import containerRoutes from "./src/routes/containers.js";
+import { setupTunnelWebSocket } from "./src/ws/tunnelSocket.js";
 import { log } from "./src/logger.js";
 import { setupMetricsWebSocket } from "./src/ws/metricsSocket.js";
 import { setupContainersWebSocket } from "./src/ws/containersSocket.js";
@@ -81,6 +82,7 @@ if (USE_HTTPS) {
   );
   setupMetricsWebSocket(server);
   setupContainersWebSocket(server);
+  setupTunnelWebSocket(server);
 
   server.listen(PORT, () => {
     log.info(`HTTPS server running on https://localhost:${PORT}`);
@@ -89,6 +91,7 @@ if (USE_HTTPS) {
   const server = http.createServer(app);
   setupMetricsWebSocket(server);
   setupContainersWebSocket(server);
+  setupTunnelWebSocket(server);
   server.listen(PORT, () => {
     log.info(`HTTP server running on http://localhost:${PORT}`);
   });

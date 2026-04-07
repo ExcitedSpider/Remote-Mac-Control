@@ -366,3 +366,162 @@ body {
   color: #ccc;
   font-variant-numeric: tabular-nums;
 }
+
+/* Tunnel health */
+.tunnel-panel {
+  background: #16213e;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.tunnel-panel .header {
+  margin-bottom: 16px;
+}
+
+.tunnel-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tunnel-status-label {
+  font-size: 0.8em;
+  color: #888;
+  text-transform: capitalize;
+}
+
+.tunnel-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.tunnel-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tunnel-card {
+  background: #1a1a2e;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.tunnel-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.tunnel-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tunnel-card-name {
+  font-size: 0.95em;
+  font-weight: 500;
+  color: #e2e2e2;
+}
+
+.tunnel-card-source {
+  font-size: 0.65em;
+  color: #666;
+  text-transform: uppercase;
+  background: #2a2a4e;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.tunnel-card-conns {
+  font-size: 0.75em;
+  color: #888;
+}
+
+.tunnel-routes {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tunnel-route {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #1a1a2e;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  font-size: 0.85em;
+}
+
+.tunnel-route-hostname {
+  color: #ccc;
+  font-weight: 500;
+}
+
+.tunnel-route-arrow {
+  color: #555;
+}
+
+.tunnel-route-service {
+  color: #888;
+}
+
+.tunnel-port-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Responsive: stack panels and shrink padding on small screens */
+@media (max-width: 900px) {
+  body {
+    padding: 56px 12px 24px;
+  }
+
+  .dashboard-layout {
+    flex-direction: column;
+  }
+
+  .container,
+  .system-metrics {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .container {
+    padding: 24px;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .dashboard-wrapper > .btn-logout {
+    top: -44px;
+  }
+
+  .tunnel-route {
+    flex-wrap: wrap;
+  }
+
+  .tunnel-route-service {
+    word-break: break-all;
+  }
+
+  .container-stats-row {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}

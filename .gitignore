@@ -4,3 +4,4 @@ certs/
 local.env
 cloudflared-config.yml
 logs/
+public/assets/

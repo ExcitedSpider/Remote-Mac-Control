@@ -46,3 +46,33 @@ export interface ContainerWithStats {
   created: number;
   stats: ContainerStats | null;
 }
+
+export interface IngressRoute {
+  hostname: string | null;
+  service: string;
+  port: number | null;
+  portOpen: boolean | null;
+}
+
+export interface TunnelConnection {
+  colo: string;
+  originIp: string;
+  openedAt: string;
+}
+
+export interface TunnelInfo {
+  id: string;
+  name: string;
+  status: string;
+  configSource: "local" | "cloudflare";
+  remoteConfig: boolean;
+  connections: TunnelConnection[];
+  ingress: IngressRoute[];
+}
+
+export interface TunnelHealth {
+  apiAvailable: boolean;
+  apiError: string | null;
+  tunnels: TunnelInfo[];
+  timestamp: number;
+}
